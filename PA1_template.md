@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document: 
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 ###Introduction
 
@@ -23,13 +18,15 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 ###Loading and preprocessing the data
 Code for loading the data.  The data is available via the course github repository (linked above) and thus its download is not coded for.
-```{r, loading}
+
+```r
 unzip("activity.zip")
 activity<-read.csv("activity.csv")
 ```
 Loading necessary packages, and preprocessing the data
 
-```{r mean per day, results="hide", message=FALSE, warning=FALSE}
+
+```r
 require(dplyr)
 require(stringr)
 #This will load packages.  Will install packages if not already available in library
@@ -40,7 +37,8 @@ activity$interval<-str_pad(activity$interval, 4, pad="0")
 
 ###What is the mean total number of steps taken per day?  
 Histogram of the total number of steps taken each day  
-```{r perday}
+
+```r
 perday<-select(activity, steps, date)
   #Selects relevant variables
 perday<-group_by(perday, date)
@@ -50,18 +48,27 @@ perday<-summarise(perday, steps=sum(steps, na.rm=TRUE))
 
 hist(perday$steps, xlab="Total Steps Taken", ylab="Number of Days", breaks=20, main="Steps Taken \nOctober 1, 2012 - November 30, 2012", col="deepskyblue3")
 ```
+
+![](PA1_template_files/figure-html/perday-1.png) 
   
 Mean and Median total number of steps taken per day
-```{r specs}
+
+```r
 specs<-cbind(mean(perday$steps, na.rm=TRUE), median(perday$steps))
 colnames(specs)<-c("Mean", "Median")
 rownames(specs)<-"Daily Steps Taken"
 specs
 ```
 
+```
+##                      Mean Median
+## Daily Steps Taken 9354.23  10395
+```
+
 ###What is the average daily activity pattern?  
 Time series plot
-```{r perinterval}
+
+```r
 byinterval<-select(activity, steps, interval)
     #Selects relevant variables
 byinterval<-group_by(byinterval, interval)
@@ -76,18 +83,34 @@ bytime$interval<-strptime(bytime$interval, format="%H%M")
 plot(bytime$interval, bytime$average.steps, type="l", ylab="Average Steps Taken", xlab="Time in 24hour Day (Hours:Minutes)", main="Average Steps Taken over 24 Hours")
 ```
 
+![](PA1_template_files/figure-html/perinterval-1.png) 
+
 Which 5-minute interval, on average, contains the maximum number of steps?
-```{r interval max}
+
+```r
 byinterval[byinterval$average.steps==max(byinterval$average.steps),]
+```
+
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval average.steps
+## 1     0835      206.1698
 ```
 ###Inputing missing values
 Total number of missing values in the dataset
-```{r, NAs}
+
+```r
 sum(is.na(activity))
+```
+
+```
+## [1] 2304
 ```
   
 Where there are missing values in the data (i.e. where steps have not been recorded) bias may have been introduced into the calculations and/or summaries.  To address this, the mean value for that 5-minute time interval has been used.
-```{r, ajusted}
+
+```r
 ajusted<-activity
     for (i in 1:nrow(activity)){
         if (is.na(activity$steps[i])==TRUE){
@@ -96,7 +119,8 @@ ajusted<-activity
   }
 ```
   Histogram of the total number of steps taken each day, with respective mean interval values replacing NA values.  
-```{r, AjustedGraph}
+
+```r
 perdayajusted<-select(ajusted, steps, date)
   #Selects relevant variables
 perdayajusted<-group_by(perdayajusted, date)
@@ -106,10 +130,13 @@ perdayajusted<-summarise(perdayajusted, steps=sum(steps, na.rm=TRUE))
 
 hist(perdayajusted$steps, xlab="Total Steps Taken", ylab="Number of Days", breaks=20, main="Steps Taken \nOctober 1, 2012 - November 30, 2012 \nAjusting for Missing Values", col="deepskyblue3")
 ```
+
+![](PA1_template_files/figure-html/AjustedGraph-1.png) 
   
 A Table Comparison of estimated mean and median values of daily steps taken shows how these values differ from the estimates taken from the fist part of the assignment.  Substituting the average steps taken for each interval when there were missing data, increases the estimated mean of steps taken daily, and puts it in closer alignment with the estimated median of steps taken daily.
 
-```{r tablecompare}
+
+```r
 table<-rbind(mean(perday$steps, na.rm=TRUE), mean(perdayajusted$steps))
 table<-cbind(table, rbind(median(perday$steps, na.rm=TRUE), median(perdayajusted$steps)))
 rownames(table)<-c("Initial Data", "NAs Ajusted")
@@ -117,11 +144,18 @@ colnames(table)<-c("Mean","Median")
 table
 ```
 
+```
+##                  Mean   Median
+## Initial Data  9354.23 10395.00
+## NAs Ajusted  10766.19 10766.19
+```
+
 ###Are there differences in activity patterns between weekdays and weekends?
 This section relies on the dataset with the missing values substituted to reflect the mean value at their respective intervals.
 
 The panel plot below compares the steps taken throughout the day averaged across weekdays or weekends.  The Total Avearage Steps taken throught the day for weekdays and weekends is summarized in the table that follows.
-```{r, warning=FALSE}
+
+```r
 ajusted$date<-strptime(ajusted$date, format="%Y-%m-%d")
 ajusted$day<-weekdays(ajusted$date)
     #Adds day of the week column to dataset
@@ -155,9 +189,18 @@ weekends<-ajusted[ajusted$day==weekend,]
 mtext("Average Steps Taken", side=2, outer=TRUE, line=4, las=3)
 mtext("Time in 24hour Day (Hours:Minutes)", side=1, outer=TRUE, line=3) #Sets outer plot labels
 ```
-```{r}
+
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png) 
+
+```r
 table<-rbind(sum(weekdays$average.steps), sum(weekends$average.steps))
 colnames(table)<-"Average Total Steps"
 rownames(table)<-c("Weekdays", "Weekends")
 table
+```
+
+```
+##          Average Total Steps
+## Weekdays            10133.54
+## Weekends            12170.02
 ```
