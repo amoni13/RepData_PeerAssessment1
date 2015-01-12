@@ -131,7 +131,7 @@ perdayajusted<-summarise(perdayajusted, steps=sum(steps, na.rm=TRUE))
 hist(perdayajusted$steps, xlab="Total Steps Taken", ylab="Number of Days", breaks=20, main="Steps Taken \nOctober 1, 2012 - November 30, 2012 \nAjusting for Missing Values", col="deepskyblue3")
 ```
 
-![](PA1_template_files/figure-html/AjustedGraph-1.png) 
+![](PA1_template_files/figure-html/AjustedPerDay-1.png) 
   
 A Table Comparison of estimated mean and median values of daily steps taken shows how these values differ from the estimates taken from the fist part of the assignment.  Substituting the average steps taken for each interval when there were missing data, increases the estimated mean of steps taken daily, and puts it in closer alignment with the estimated median of steps taken daily.
 
@@ -190,7 +190,7 @@ mtext("Average Steps Taken", side=2, outer=TRUE, line=4, las=3)
 mtext("Time in 24hour Day (Hours:Minutes)", side=1, outer=TRUE, line=3) #Sets outer plot labels
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-1-1.png) 
+![](PA1_template_files/figure-html/AjustedDayofWeek-1.png) 
 
 ```r
 table<-rbind(sum(weekdays$average.steps), sum(weekends$average.steps))

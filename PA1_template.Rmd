@@ -96,7 +96,7 @@ ajusted<-activity
   }
 ```
   Histogram of the total number of steps taken each day, with respective mean interval values replacing NA values.  
-```{r, AjustedGraph}
+```{r, AjustedPerDay}
 perdayajusted<-select(ajusted, steps, date)
   #Selects relevant variables
 perdayajusted<-group_by(perdayajusted, date)
@@ -121,7 +121,7 @@ table
 This section relies on the dataset with the missing values substituted to reflect the mean value at their respective intervals.
 
 The panel plot below compares the steps taken throughout the day averaged across weekdays or weekends.  The Total Avearage Steps taken throught the day for weekdays and weekends is summarized in the table that follows.
-```{r, warning=FALSE}
+```{r, AjustedDayofWeek, warning=FALSE}
 ajusted$date<-strptime(ajusted$date, format="%Y-%m-%d")
 ajusted$day<-weekdays(ajusted$date)
     #Adds day of the week column to dataset
